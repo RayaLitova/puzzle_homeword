@@ -5,24 +5,24 @@
 
 //-----------------------------------------------------------------------------
 
-char used_topics[10][11];
-int used_tpcs=0;
+char used_topics[10][11]; //already used topics for puzzles
+int used_tpcs=0; //num of used topics
 
-struct puzzle_t{
+struct puzzle_t{ //puzzle struct
 	int parts;
 	char topic[10];
 	char title[20];
 	struct puzzle_t* next;	
 };
 
-struct list_t{
+struct list_t{ //linked list (puzzles)
 	int size;
 	struct puzzle_t* head;
 };
 
 //--------------------------------------------------------------------------------------
 
-int if_in(char *str){
+int if_in(char *str){ //checks if topic is already used
 	for(int i=0;i<=used_tpcs;i++){
 
 		if(strcmp(str,used_topics[i])==0){
@@ -34,22 +34,22 @@ int if_in(char *str){
 
 //---------------------------------------------------------------------------------------
 
-struct puzzle_t* puzzle_create(){
+struct puzzle_t* puzzle_create(){ //creates a puzzle with only a random topic and nth else
 	char topics[10][11]={"animations", "animals", "cars", "cities", "games", "history", "landscapes", "movies", "space", "sports"};
-	srand(time(0));
-	struct puzzle_t* puzzle=(struct puzzle_t*) malloc(sizeof(struct puzzle_t*));
+	srand(time(0));//for random number
+	struct puzzle_t* puzzle=(struct puzzle_t*) malloc(sizeof(struct puzzle_t*));//frees up space for the new struct (don't ask questions here that's how they want us to do it)
 	
 	do{
 		strcpy(puzzle->topic,topics[rand()%10]);
 	}while(if_in(puzzle->topic));
 	
-	strcpy(used_topics[used_tpcs],puzzle->topic);
-	used_tpcs++;
+	strcpy(used_topics[used_tpcs],puzzle->topic);//inserts the topic ot the new puzzle to already used
+	used_tpcs++;//increases their num
 	
 	return puzzle;
 }
 
-void insert(struct list_t *list, struct puzzle_t *puzzle){
+void insert(struct list_t *list, struct puzzle_t *puzzle){//inserts a puzzle into the list
 
 	if(list->head!=NULL){
     		puzzle->next = list->head;
@@ -60,7 +60,7 @@ void insert(struct list_t *list, struct puzzle_t *puzzle){
     	list->size++; 
 }
 
-void full_puzzle_params(struct puzzle_t *puzzle){
+void full_puzzle_params(struct puzzle_t *puzzle){//asks the user to full the parameters
 	printf("Topic: %s\n", puzzle->topic);
 	printf("Parts: ");
 	scanf("%d",&puzzle->parts);
@@ -70,8 +70,8 @@ void full_puzzle_params(struct puzzle_t *puzzle){
 	printf("-------------------------------\n");
 }
 
-void show_puzzles(struct list_t *list){
-	int count=1;
+void show_puzzles(struct list_t *list){//prints the whole list (here i get the segm. fault)
+	int count=1;//only for displaying
 	struct puzzle_t* puzzle=list->head;
 	for(int i=0;i<list->size;i++){
 		printf("Puzzle %d:\n", count);
@@ -86,16 +86,10 @@ void show_puzzles(struct list_t *list){
 //-------------------------------------------------------------------------------------
 
 int main(){
-	struct list_t list={0,NULL};
-	struct puzzle_t t={14,"a","a",NULL};
-	struct puzzle_t *temp=&t;	
+	struct list_t list={0,NULL};	
 	for(int i=0;i<4;i++){
-		//temp=puzzle_create();
-		
-		full_puzzle_params(temp);
-		insert(&list,temp);
-
-
+		insert(&list,puzzle_create());
+		full_puzzle_params(list.head);
 	}
 	show_puzzles(&list);
 	
